@@ -8,10 +8,14 @@ import java.io.PrintStream;
  */
 public class ConvertToASCII {
     public static void main(String[] args) throws IOException {
-        BufferedImage grayImage = Grayscale.convertToGrayScale("C:\\Users\\Emil Sitell\\IdeaProjects\\ascii_images\\gunther_img.jpg", 1);
+        long startTime = System.nanoTime();
+        BufferedImage grayImage = Grayscale.convertToGrayScale("G:\\Min enhet\\Programmering\\ascii_image_converter\\give_you_up.jpg", 1);
+        System.out.println((System.nanoTime() - startTime)/1000000000.0 + " seconds to grayscale");
         int width = grayImage.getWidth();
         int height = grayImage.getHeight();
-        int roughness = ".:-=+*#%@".toCharArray().length - 1;
+
+        // How many different grayness levels there are
+        int roughness = ".:-=+*%#@".toCharArray().length - 1;
 
         PrintStream tmp = System.out;
 
@@ -19,17 +23,18 @@ public class ConvertToASCII {
             PrintStream stream = new PrintStream("ASCII_image_test.txt");
             System.setOut(stream);
 
-            for (int y = 0; y < height; y+=2) {
+            for (int y = 0; y < height; y+=4) {
+                StringBuilder charRow = new StringBuilder();
                 for (int x = 0; x < width; x++){
                     int p = grayImage.getRGB(x, y);
 
                     int b = p&0xff;
 
                     int grayness = rgbToGrayness(b, roughness);
-                    System.out.print(graynessToASCII(grayness));
+                    charRow.append(graynessToASCII(grayness));
                     //System.out.print(grayness + " ");
                 }
-                System.out.println();
+                System.out.println(charRow);
             }
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
@@ -37,6 +42,8 @@ public class ConvertToASCII {
         finally {
             System.setOut(tmp);
         }
+
+        System.out.println((System.nanoTime() - startTime)/1000000000.0 + " seconds total");
     }
 
     public static int rgbToGrayness(int rgb, int roughness) {
@@ -49,7 +56,7 @@ public class ConvertToASCII {
 
     public static char graynessToASCII(int grayness) {
         //char[] asciiList = new char[] {' ','.',':','-','=','+','*','%','@','#'};
-        char[] asciiList = ".:-=+*#%@".toCharArray();
+        char[] asciiList = ".:-=+*%#@".toCharArray();
         if (grayness > asciiList.length) {
             grayness = asciiList.length;
         }
