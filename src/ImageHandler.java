@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Converts a image to grayscale
  */
-public class Grayscale {
+public class ImageHandler {
     public static void main(String[] args) throws IOException {
         BufferedImage grayImage = convertToGrayScale("C:\\Users\\Emil Sitell\\IdeaProjects\\ascii_images\\gunther_img.jpg", 4);
     }
@@ -76,5 +76,23 @@ public class Grayscale {
         graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
         graphics2D.dispose();
         return resizedImage;
+    }
+
+    public static BufferedImage loadImage(String filePath, int scale) throws IOException {
+        BufferedImage img = null;
+        File f = null;
+
+        // read image
+        try {
+            f = new File(filePath);
+            img = ImageIO.read(f);
+        }
+        catch (IOException e){
+            System.out.println(e);
+        }
+
+        img = resizeImage(img, (img.getWidth()/(scale)), (int) (img.getHeight()/(scale)));
+
+        return img;
     }
 }

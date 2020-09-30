@@ -9,41 +9,54 @@ import java.io.PrintStream;
 public class ConvertToASCII {
     public static void main(String[] args) throws IOException {
         long startTime = System.nanoTime();
-        BufferedImage grayImage = Grayscale.convertToGrayScale("G:\\Min enhet\\Programmering\\ascii_image_converter\\give_you_up.jpg", 1);
-        System.out.println((System.nanoTime() - startTime)/1000000000.0 + " seconds to grayscale");
-        int width = grayImage.getWidth();
-        int height = grayImage.getHeight();
+        BufferedImage readImage = ImageHandler.loadImage("G:\\Min enhet\\Programmering\\ascii_image_converter\\gunther_img.jpg", 1);
+        double grayScaleTime = (System.nanoTime() - startTime)/1000000000.0;
+        System.out.println(grayScaleTime + " seconds to grayscale");
+
+        int width = readImage.getWidth();
+        int height = readImage.getHeight();
 
         // How many different grayness levels there are
         int roughness = ".:-=+*%#@".toCharArray().length - 1;
 
         PrintStream tmp = System.out;
 
+        // Reads the image
         try{
             PrintStream stream = new PrintStream("ASCII_image_test.txt");
             System.setOut(stream);
 
-            for (int y = 0; y < height; y+=4) {
-                StringBuilder charRow = new StringBuilder();
+            // String for storing all ASCII chars
+            StringBuilder charArray = new StringBuilder();
+            for (int y = 0; y < height; y+=2) {
                 for (int x = 0; x < width; x++){
-                    int p = grayImage.getRGB(x, y);
+                    int pixelValueBinary = readImage.getRGB(x, y);
 
-                    int b = p&0xff;
+                    int a = (pixelValueBinary>>24)&0xff;
+                    int r = (pixelValueBinary>>16)&0xff;
+                    int g = (pixelValueBinary>>8)&0xff;
+                    int b = pixelValueBinary&0xff;
 
-                    int grayness = rgbToGrayness(b, roughness);
-                    charRow.append(graynessToASCII(grayness));
-                    //System.out.print(grayness + " ");
+                    int avg = (r+g+b)/3;
+
+                    int grayness = rgbToGrayness(avg, roughness);
+                    charArray.append(graynessToASCII(grayness));
                 }
-                System.out.println(charRow);
+                // Splits the rows of chars
+                charArray.append("\n");
             }
+            System.out.println(charArray);
+
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
         }
         finally {
             System.setOut(tmp);
         }
-
-        System.out.println((System.nanoTime() - startTime)/1000000000.0 + " seconds total");
+        double convertTime = roundToNDecimal((System.nanoTime() - startTime)/1000000000.0 - grayScaleTime, 7);
+        System.out.println(convertTime + " seconds to convert");
+        System.out.println();
+        System.out.println(grayScaleTime + convertTime + " seconds in total");
     }
 
     public static int rgbToGrayness(int rgb, int roughness) {
@@ -55,15 +68,10 @@ public class ConvertToASCII {
     }
 
     public static char graynessToASCII(int grayness) {
-        //char[] asciiList = new char[] {' ','.',':','-','=','+','*','%','@','#'};
         char[] asciiList = ".:-=+*%#@".toCharArray();
         if (grayness > asciiList.length) {
             grayness = asciiList.length;
         }
         return asciiList[(asciiList.length) - grayness];
-    }
-
-    public static char[] stringToCharList(String string) {
-        return string.toCharArray();
     }
 }
