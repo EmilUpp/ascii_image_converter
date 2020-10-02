@@ -15,11 +15,8 @@ public class ConvertToASCII {
         for (String imagePath : imagePathList) {
             long startTime = System.nanoTime();
             printToASCII(imagePath, scale);
-
-            // To make sure prior image is out of picture
-            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
             double convertTime = roundToNDecimal((System.nanoTime() - startTime)/1000000000.0, 7);
-            Thread.sleep((long) Math.max(0, 200 - convertTime * 1000));
+            Thread.sleep((long) Math.max(0, 150 - convertTime * 1000));
         }
     }
 
@@ -77,7 +74,10 @@ public class ConvertToASCII {
                 // Splits the rows of chars
                 charArray.append("\n");
             }
+            // To make sure prior image is out of picture
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
             System.out.println(charArray);
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
         } finally {
             System.setOut(tmp);
         }
@@ -116,6 +116,14 @@ public class ConvertToASCII {
         } else {
             return asciiList[asciiList.length - grayness];
         }
-
+    }
+    public static void clearConsole(){
+        //Clears Screen in java
+        try {
+            if (System.getProperty("os.name").contains("Windows"))
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            else
+                Runtime.getRuntime().exec("clear");
+        } catch (IOException | InterruptedException ex) {}
     }
 }
