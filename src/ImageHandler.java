@@ -27,7 +27,10 @@ public class ImageHandler {
             System.out.println(e);
         }
 
+        long startTime = System.nanoTime();
         img = resizeImage(img, (img.getWidth()/(scale)), (int) (img.getHeight()/(scale)));
+        double grayScaleTime = (System.nanoTime() - startTime)/1000000000.0;
+        System.out.println(grayScaleTime + " seconds to resize");
 
         int width = img.getWidth();
         int height = img.getHeight();
@@ -78,6 +81,13 @@ public class ImageHandler {
         return resizedImage;
     }
 
+    /**
+     * Loads image from filepath
+     * @param filePath path to image
+     * @param scale how much the image should be scaled down
+     * @return BufferedImage with loaded image
+     * @throws IOException when file is now found
+     */
     public static BufferedImage loadImage(String filePath, int scale) throws IOException {
         BufferedImage img = null;
         File f = null;
@@ -91,7 +101,9 @@ public class ImageHandler {
             System.out.println(e);
         }
 
-        img = resizeImage(img, (img.getWidth()/(scale)), (int) (img.getHeight()/(scale)));
+        if (scale > 1) {
+            img = resizeImage(img, (img.getWidth()/(scale)),(img.getHeight()/(scale)));
+        }
 
         return img;
     }
