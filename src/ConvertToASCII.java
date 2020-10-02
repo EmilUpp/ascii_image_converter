@@ -1,5 +1,4 @@
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -8,16 +7,23 @@ import java.io.PrintStream;
  * @author Emil Sitell
  */
 public class ConvertToASCII {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        for (int i=0; i < 10; i++) {
+            toASCII();
+            Thread.sleep(1);
+        }
+    }
+
+    public static void toASCII() throws IOException {
         long startTime = System.nanoTime();
-        final int SCALE = 1;
+        final int SCALE = 4;
         BufferedImage readImage = ImageHandler.loadImage("G:\\Min enhet\\Programmering\\ascii_image_converter\\gunther_img.jpg", SCALE);
         double grayScaleTime = (System.nanoTime() - startTime)/1000000000.0;
         System.out.println(grayScaleTime + " seconds to load");
 
         int width = readImage.getWidth();
         int height = readImage.getHeight();
-        int verticalSamplingScale = 2;
+        double verticalSamplingScale = 5/3.0;
 
         // How many different grayness levels there are
         char[] asciiList = ".:-=+*%#@".toCharArray();
@@ -27,14 +33,14 @@ public class ConvertToASCII {
 
         // Reads the image
         try{
-            PrintStream stream = new PrintStream("ASCII_image_test.txt");
-            System.setOut(stream);
+            //PrintStream stream = new PrintStream("ASCII_image_test.txt");
+            System.setOut(tmp);
 
             // String for storing all ASCII chars
             StringBuilder charArray = new StringBuilder();
-            for (int y = 0; y < height; y+=verticalSamplingScale) {
+            for (double y = 0; y < height; y+=roundToNDecimal(verticalSamplingScale, 1)) {
                 for (int x = 0; x < width; x++){
-                    int pixelValueBinary = readImage.getRGB(x, y);
+                    int pixelValueBinary = readImage.getRGB(x, (int) y);
 
                     // Reads the RGB values
                     int a = (pixelValueBinary>>24)&0xff;
@@ -51,11 +57,7 @@ public class ConvertToASCII {
                 charArray.append("\n");
             }
             System.out.println(charArray);
-
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        }
-        finally {
+        } finally {
             System.setOut(tmp);
         }
 
