@@ -1,4 +1,5 @@
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -8,22 +9,40 @@ import java.io.PrintStream;
  */
 public class ConvertToASCII {
     public static void main(String[] args) throws IOException, InterruptedException {
-        for (int i=0; i < 10; i++) {
-            toASCII();
-            Thread.sleep(1);
+        String[] imagePathList = LoadFromFolder.findJPGInFolder("G:/Min enhet/Programmering/ascii_image_converter/give_you_up_image_list");
+        final int scale = 2;
+
+        for (String imagePath : imagePathList) {
+            long startTime = System.nanoTime();
+            printToASCII(imagePath, scale);
+
+            // To make sure prior image is out of picture
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            double convertTime = roundToNDecimal((System.nanoTime() - startTime)/1000000000.0, 7);
+            Thread.sleep((long) Math.max(0, 200 - convertTime * 1000));
         }
     }
 
-    public static void toASCII() throws IOException {
-        long startTime = System.nanoTime();
-        final int SCALE = 4;
-        BufferedImage readImage = ImageHandler.loadImage("G:\\Min enhet\\Programmering\\ascii_image_converter\\gunther_img.jpg", SCALE);
-        double grayScaleTime = (System.nanoTime() - startTime)/1000000000.0;
-        System.out.println(grayScaleTime + " seconds to load");
+    /**
+     * Converts an image to ASCII characters and prints it to console
+     * Uses an array of ASCII character to represent the grayscale
+     * Sample ratio of source image is set for font Lucida Console
+     *
+     * @param filepath String with path to image
+     * @param scale How much to scale the image
+     * @throws IOException if image path is invalid
+     */
+    public static void printToASCII(String filepath, int scale) throws IOException {
+        //long startTime = System.nanoTime();
+        BufferedImage readImage = ImageHandler.loadImage(filepath, scale);
+        //double grayScaleTime = (System.nanoTime() - startTime)/1000000000.0;
+        //System.out.println(grayScaleTime + " seconds to load");
 
         int width = readImage.getWidth();
         int height = readImage.getHeight();
-        double verticalSamplingScale = 5/3.0;
+
+        // 5/3 - ratio for lucida console
+        final double verticalSamplingScale = 5/3.0;
 
         // How many different grayness levels there are
         char[] asciiList = ".:-=+*%#@".toCharArray();
@@ -33,7 +52,9 @@ public class ConvertToASCII {
 
         // Reads the image
         try{
+            // Uncomment to write to given file
             //PrintStream stream = new PrintStream("ASCII_image_test.txt");
+
             System.setOut(tmp);
 
             // String for storing all ASCII chars
@@ -51,7 +72,7 @@ public class ConvertToASCII {
                     int avg = (r+g+b)/3;
 
                     int grayness = rgbToGrayness(avg, roughness);
-                    charArray.append(graynessToASCII(grayness, asciiList));
+                    charArray.append(graynessToASCII(grayness, asciiList, false));
                 }
                 // Splits the rows of chars
                 charArray.append("\n");
@@ -61,7 +82,7 @@ public class ConvertToASCII {
             System.setOut(tmp);
         }
 
-        double convertTime = roundToNDecimal((System.nanoTime() - startTime)/1000000000.0 - grayScaleTime, 7);
+/*        double convertTime = roundToNDecimal((System.nanoTime() - startTime)/1000000000.0 - grayScaleTime, 7);
         System.out.println(convertTime + " seconds to convert");
 
         System.out.println();
@@ -69,7 +90,8 @@ public class ConvertToASCII {
         System.out.println("ASCII resolution:  " + width + "x"  + (height / verticalSamplingScale));
 
         System.out.println();
-        System.out.println(grayScaleTime + convertTime + " seconds in total");
+        System.out.println(grayScaleTime + convertTime + " seconds in total");*/
+
     }
 
     public static int rgbToGrayness(int rgb, int roughness) {
@@ -85,10 +107,15 @@ public class ConvertToASCII {
      * @param grayness grayness scaled to amount of available ASCII chars
      * @return char
      */
-    public static char graynessToASCII(int grayness, char[] asciiList) {
+    public static char graynessToASCII(int grayness, char[] asciiList, boolean reversed) {
         if (grayness > asciiList.length) {
             grayness = asciiList.length;
         }
-        return asciiList[(asciiList.length) - grayness];
+        if (reversed) {
+            return asciiList[grayness - 1];
+        } else {
+            return asciiList[asciiList.length - grayness];
+        }
+
     }
 }
