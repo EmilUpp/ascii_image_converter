@@ -1,69 +1,129 @@
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
 /**
  * Converts an image to ascii characters in a txt file
+ * @author Emil Sitell
  */
 public class ConvertToASCII {
-    public static void main(String[] args) throws IOException {
-        long startTime = System.nanoTime();
-        BufferedImage grayImage = Grayscale.convertToGrayScale("G:\\Min enhet\\Programmering\\ascii_image_converter\\give_you_up.jpg", 1);
-        System.out.println((System.nanoTime() - startTime)/1000000000.0 + " seconds to grayscale");
-        int width = grayImage.getWidth();
-        int height = grayImage.getHeight();
+    public static void main(String[] args) throws IOException, InterruptedException {
+        String[] imagePathList = LoadFromFolder.findJPGInFolder("C:/Users/Emil Sitell/IdeaProjects/ascii_images/image_lists/give_you_up_image_list");
+        final int scale = 3;
+
+        for (String imagePath : imagePathList) {
+            long startTime = System.nanoTime();
+            printToASCII(imagePath, scale);
+            double convertTime = roundToNDecimal((System.nanoTime() - startTime)/1000000000.0, 7);
+            Thread.sleep((long) Math.max(0, 200 - convertTime * 1000));
+        }
+    }
+    /**
+     * Converts an image to ASCII characters and prints it to console
+     * Uses an array of ASCII character to represent the grayscale
+     * Sample ratio of source image is set for font Lucida Console
+     *
+     * @param filepath String with path to image
+     * @param scale How much to scale the image
+     * @throws IOException if image path is invalid
+     */
+    public static void printToASCII(String filepath, int scale) throws IOException {
+        //long startTime = System.nanoTime();
+        BufferedImage readImage = ImageHandler.loadImage(filepath, scale);
+        //double grayScaleTime = (System.nanoTime() - startTime)/1000000000.0;
+        //System.out.println(grayScaleTime + " seconds to load");
+
+        int width = readImage.getWidth();
+        int height = readImage.getHeight();
+
+        // 5/3 - ratio for lucida console
+        final double verticalSamplingScale =5/3.0;
 
         // How many different grayness levels there are
-        int roughness = ".:-=+*%#@".toCharArray().length - 1;
+        char[] asciiList = ".:-=+*%#@".toCharArray();
+        int roughness = 255 / (asciiList.length - 1);
 
         PrintStream tmp = System.out;
 
+        // Reads the image
         try{
-            PrintStream stream = new PrintStream("ASCII_image_test.txt");
-            System.setOut(stream);
+            // Uncomment to write to given file
+            //PrintStream stream = new PrintStream("ASCII_image_test.txt");
+            System.setOut(tmp);
 
-            for (int y = 0; y < height; y+=4) {
-                StringBuilder charRow = new StringBuilder();
+            // String for storing all ASCII chars
+            StringBuilder charArray = new StringBuilder();
+            for (double y = 0; y < height; y+=roundToNDecimal(verticalSamplingScale, 1)) {
                 for (int x = 0; x < width; x++){
-                    int p = grayImage.getRGB(x, y);
+                    int pixelValueBinary = readImage.getRGB(x, (int) y);
 
-                    int b = p&0xff;
+                    // Reads the RGB values
+                    int a = (pixelValueBinary>>24)&0xff;
+                    int r = (pixelValueBinary>>16)&0xff;
+                    int g = (pixelValueBinary>>8)&0xff;
+                    int b = pixelValueBinary&0xff;
 
-                    int grayness = rgbToGrayness(b, roughness);
-                    charRow.append(graynessToASCII(grayness));
-                    //System.out.print(grayness + " ");
+                    int avg = (r+g+b)/3;
+
+                    int grayness = rgbToGrayness(avg, roughness);
+                    charArray.append(graynessToASCII(grayness, asciiList, false));
                 }
-                System.out.println(charRow);
+                // Splits the rows of chars
+                charArray.append("\n");
             }
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        }
-        finally {
+            // To make sure prior image is out of picture
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" +
+                               "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" +
+                               "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            System.out.println(charArray);
+            //System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        } finally {
             System.setOut(tmp);
         }
 
-        System.out.println((System.nanoTime() - startTime)/1000000000.0 + " seconds total");
+/*        double convertTime = roundToNDecimal((System.nanoTime() - startTime)/1000000000.0 - grayScaleTime, 7);
+        System.out.println(convertTime + " seconds to convert");
+
+        System.out.println();
+        System.out.println("Original resolution: " + width * SCALE + "x" + height * SCALE);
+        System.out.println("ASCII resolution:  " + width + "x"  + (height / verticalSamplingScale));
+
+        System.out.println();
+        System.out.println(grayScaleTime + convertTime + " seconds in total");*/
+
     }
 
     public static int rgbToGrayness(int rgb, int roughness) {
-        return 1 + rgb / (255/roughness);
+        return 1 + rgb / (roughness);
     }
 
     public static double roundToNDecimal(double value, int n) {
         return (double)Math.round(value * Math.pow(10, n)) / Math.pow(10, n);
     }
 
-    public static char graynessToASCII(int grayness) {
-        //char[] asciiList = new char[] {' ','.',':','-','=','+','*','%','@','#'};
-        char[] asciiList = ".:-=+*%#@".toCharArray();
+    /**
+     * Converts a int representing grayness to corresponding ASCII char
+     * @param grayness grayness scaled to amount of available ASCII chars
+     * @return char
+     */
+    public static char graynessToASCII(int grayness, char[] asciiList, boolean reversed) {
         if (grayness > asciiList.length) {
             grayness = asciiList.length;
         }
-        return asciiList[(asciiList.length) - grayness];
+        if (reversed) {
+            return asciiList[grayness - 1];
+        } else {
+            return asciiList[asciiList.length - grayness];
+        }
     }
-
-    public static char[] stringToCharList(String string) {
-        return string.toCharArray();
+    public static void clearConsole(){
+        //Clears Screen in java
+        try {
+            if (System.getProperty("os.name").contains("Windows"))
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            else
+                Runtime.getRuntime().exec("clear");
+        } catch (IOException | InterruptedException ex) {}
     }
 }
