@@ -1,11 +1,11 @@
-import java.awt.image.BufferedImage;
+/*import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import org.opencv.core.Mat;
 
-/**
+*//**
  *
  * @author Yucchi
- */
+ *//*
 class Mat2BufferedImage {
       public static BufferedImage toBufferedImage(Mat videoMatImage) {
 
@@ -20,4 +20,4 @@ class Mat2BufferedImage {
         return image;
     }
 
-}
+}*/

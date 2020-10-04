@@ -9,7 +9,7 @@ import java.io.PrintStream;
  */
 public class ConvertToASCII {
     public static void main(String[] args) throws IOException, InterruptedException {
-        String[] imagePathList = LoadFromFolder.findJPGInFolder("G:/Min enhet/Programmering/ascii_image_converter/give_you_up_image_list");
+        String[] imagePathList = LoadFromFolder.findJPGInFolder("C:\\Users\\Emil Sitell\\IdeaProjects\\ascii_images\\pokemon_image_list");
         final int scale = 2;
 
         for (String imagePath : imagePathList) {
@@ -19,7 +19,6 @@ public class ConvertToASCII {
             Thread.sleep((long) Math.max(0, 150 - convertTime * 1000));
         }
     }
-
     /**
      * Converts an image to ASCII characters and prints it to console
      * Uses an array of ASCII character to represent the grayscale
@@ -75,9 +74,11 @@ public class ConvertToASCII {
                 charArray.append("\n");
             }
             // To make sure prior image is out of picture
-            System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" +
+                               "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" +
+                               "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
             System.out.println(charArray);
-            System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+            //System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         } finally {
             System.setOut(tmp);
         }
