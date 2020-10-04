@@ -9,14 +9,14 @@ import java.io.PrintStream;
  */
 public class ConvertToASCII {
     public static void main(String[] args) throws IOException, InterruptedException {
-        String[] imagePathList = LoadFromFolder.findJPGInFolder("C:/Users/Emil Sitell/IdeaProjects/ascii_images/image_lists/pokemon_image_list");
-        final int scale = 2;
+        String[] imagePathList = LoadFromFolder.findJPGInFolder("C:/Users/Emil Sitell/IdeaProjects/ascii_images/image_lists/give_you_up_image_list");
+        final int scale = 3;
 
         for (String imagePath : imagePathList) {
             long startTime = System.nanoTime();
             printToASCII(imagePath, scale);
             double convertTime = roundToNDecimal((System.nanoTime() - startTime)/1000000000.0, 7);
-            Thread.sleep((long) Math.max(0, 150 - convertTime * 1000));
+            Thread.sleep((long) Math.max(0, 200 - convertTime * 1000));
         }
     }
     /**
@@ -38,7 +38,7 @@ public class ConvertToASCII {
         int height = readImage.getHeight();
 
         // 5/3 - ratio for lucida console
-        final double verticalSamplingScale = 5/3.0;
+        final double verticalSamplingScale =5/3.0;
 
         // How many different grayness levels there are
         char[] asciiList = ".:-=+*%#@".toCharArray();
@@ -50,7 +50,6 @@ public class ConvertToASCII {
         try{
             // Uncomment to write to given file
             //PrintStream stream = new PrintStream("ASCII_image_test.txt");
-
             System.setOut(tmp);
 
             // String for storing all ASCII chars
