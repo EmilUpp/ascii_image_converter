@@ -9,7 +9,7 @@ import java.io.PrintStream;
  */
 public class ConvertToASCII {
     public static void main(String[] args) throws IOException, InterruptedException {
-        String[] imagePathList = LoadFromFolder.findJPGInFolder("C:/Users/Emil Sitell/IdeaProjects/ascii_images/image_lists/give_you_up_image_list");
+        String[] imagePathList = LoadFromFolder.findJPGInFolder("G:\\Min enhet\\Programmering\\ascii_image_converter\\image_lists\\give_you_up_image_list");
         final int scale = 3;
 
         for (String imagePath : imagePathList) {
