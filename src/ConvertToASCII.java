@@ -1,5 +1,4 @@
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -38,7 +37,7 @@ public class ConvertToASCII {
         int height = readImage.getHeight();
 
         // 5/3 - ratio for lucida console
-        final double verticalSamplingScale =5/3.0;
+        final double verticalSamplingScale = 5/3.0;
 
         // How many different grayness levels there are
         char[] asciiList = ".:-=+*%#@".toCharArray();
@@ -59,7 +58,6 @@ public class ConvertToASCII {
                     int pixelValueBinary = readImage.getRGB(x, (int) y);
 
                     // Reads the RGB values
-                    int a = (pixelValueBinary>>24)&0xff;
                     int r = (pixelValueBinary>>16)&0xff;
                     int g = (pixelValueBinary>>8)&0xff;
                     int b = pixelValueBinary&0xff;
@@ -77,7 +75,6 @@ public class ConvertToASCII {
                                "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" +
                                "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
             System.out.println(charArray);
-            //System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         } finally {
             System.setOut(tmp);
         }
@@ -124,6 +121,8 @@ public class ConvertToASCII {
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             else
                 Runtime.getRuntime().exec("clear");
-        } catch (IOException | InterruptedException ex) {}
+        } catch (IOException | InterruptedException ex) {
+            System.out.println("Error while clearing console");
+        }
     }
 }

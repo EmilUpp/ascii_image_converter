@@ -1,6 +1,5 @@
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.sql.Time;
 
 /**
  * Testing how to live update txt file during runtime
