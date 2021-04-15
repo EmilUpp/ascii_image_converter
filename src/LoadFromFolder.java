@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Objects;
 
 /**
  * Loads a video from a filepath and constructs a list of images
