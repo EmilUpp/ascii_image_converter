@@ -14,12 +14,7 @@ public class LoadFromFolder {
 
     public static String[] findJPGInFolder(String folderPath) {
         // This filter will only include files ending with .jpg
-        FilenameFilter filter = new FilenameFilter() {
-            @Override
-            public boolean accept(File f, String name) {
-                return name.endsWith(".jpg");
-            }
-        };
+        FilenameFilter filter = (f, name) -> name.endsWith(".jpg");
 
         File folder = new File(folderPath);
         File[] fileList = folder.listFiles(filter);

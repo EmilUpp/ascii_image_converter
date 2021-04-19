@@ -26,8 +26,9 @@ public class ConvertToASCII {
      * @param filepath String with path to image
      * @param scale How much to scale the image
      * @throws IOException if image path is invalid
+     * @return String
      */
-    public static void printToASCII(String filepath, int scale) throws IOException {
+    public static String printToASCII(String filepath, int scale) throws IOException {
         //long startTime = System.nanoTime();
         BufferedImage readImage = ImageHandler.loadImage(filepath, scale);
         //double grayScaleTime = (System.nanoTime() - startTime)/1000000000.0;
@@ -44,6 +45,7 @@ public class ConvertToASCII {
         int roughness = 255 / (asciiList.length - 1);
 
         PrintStream tmp = System.out;
+        StringBuilder charArray = new StringBuilder();
 
         // Reads the image
         try{
@@ -52,7 +54,7 @@ public class ConvertToASCII {
             System.setOut(tmp);
 
             // String for storing all ASCII chars
-            StringBuilder charArray = new StringBuilder();
+            //StringBuilder charArray = new StringBuilder();
             for (double y = 0; y < height; y+=roundToNDecimal(verticalSamplingScale, 1)) {
                 for (int x = 0; x < width; x++){
                     int pixelValueBinary = readImage.getRGB(x, (int) y);
@@ -71,13 +73,18 @@ public class ConvertToASCII {
                 charArray.append("\n");
             }
             // To make sure prior image is out of picture
+            /*
             System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" +
                                "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" +
                                "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
             System.out.println(charArray);
+
+             */
         } finally {
             System.setOut(tmp);
         }
+
+        return charArray.toString();
 
 /*        double convertTime = roundToNDecimal((System.nanoTime() - startTime)/1000000000.0 - grayScaleTime, 7);
         System.out.println(convertTime + " seconds to convert");
