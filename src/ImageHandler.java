@@ -16,7 +16,7 @@ public class ImageHandler {
 
     public static BufferedImage convertToGrayScale(String filePath, int scale) throws IOException {
         BufferedImage img = null;
-        File f = null;
+        File f;
 
         // read image
         try {
@@ -28,7 +28,7 @@ public class ImageHandler {
         }
 
         long startTime = System.nanoTime();
-        img = resizeImage(img, (img.getWidth()/(scale)), (int) (img.getHeight()/(scale)));
+        img = resizeImage(img, scale);
         double grayScaleTime = (System.nanoTime() - startTime)/1000000000.0;
         System.out.println(grayScaleTime + " seconds to resize");
 
@@ -73,7 +73,10 @@ public class ImageHandler {
         return String.join("\\", splitOrigin) + "\\" + imgName.replace(".jpg", "") + "_grayscale.jpg";
     }
 
-    public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) throws IOException {
+    public static BufferedImage resizeImage(BufferedImage originalImage, double scale) throws IOException {
+        int targetWidth = (int) (originalImage.getWidth()/(scale));
+        int targetHeight = (int) (originalImage.getHeight()/(scale));
+
         BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = resizedImage.createGraphics();
         graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
@@ -102,7 +105,7 @@ public class ImageHandler {
         }
 
         if (scale > 1) {
-            img = resizeImage(img, (img.getWidth()/(scale)),(img.getHeight()/(scale)));
+            img = resizeImage(img, scale);
         }
 
         return img;

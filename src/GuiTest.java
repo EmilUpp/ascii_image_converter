@@ -1,13 +1,8 @@
 import javax.swing.*;
-
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
@@ -30,6 +25,8 @@ public class GuiTest {
 
     long frameTime = 0;
     java.util.List<Double> frameRates = new ArrayList<>();
+
+    WebcamHandler webcamHandler = new WebcamHandler();
 
     public GuiTest() {
 
@@ -75,12 +72,18 @@ public class GuiTest {
 
         String filepath = imagePathList[currentImage];
 
-        resizeTextArea(filepath);
+        BufferedImage image = webcamHandler.takeScreenshot();
+
+        image = ImageHandler.resizeImage(image, scale/2f);
+
+        resizeTextArea(image);
+
+        //BufferedImage image = ImageHandler.loadImage(filepath, scale);
 
         long startTime = System.nanoTime();
-        String imageToDraw = ConvertToASCII.printToASCII(filepath, scale);
+        String imageToDraw = ConvertToASCII.printToASCII(image);
         double convertTime = ConvertToASCII.roundToNDecimal((System.nanoTime() - startTime)/1000000000.0, 7);
-        Thread.sleep((long) Math.max(0, 40 - convertTime * 1000));
+        // Thread.sleep((long) Math.max(0, 40 - convertTime * 1000));
 
         // String imageToDraw = ConvertToASCII.printToASCII("G:\\Min enhet\\Programmering\\ascii_image_converter\\images\\gunther_img.jpg", 5);
 
@@ -97,6 +100,13 @@ public class GuiTest {
 
     private void resizeTextArea(String filepath) throws IOException {
         BufferedImage readImage = ImageHandler.loadImage(filepath, scale);
+        int width = (readImage.getWidth() * (scale));
+        int height = (readImage.getHeight() * (scale));
+
+        imageTextArea.setPreferredSize(new Dimension(width, height));
+    }
+
+    private void resizeTextArea(BufferedImage readImage) throws IOException {
         int width = (readImage.getWidth() * (scale));
         int height = (readImage.getHeight() * (scale));
 

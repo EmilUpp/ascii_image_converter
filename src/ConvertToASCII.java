@@ -13,7 +13,7 @@ public class ConvertToASCII {
 
         for (String imagePath : imagePathList) {
             long startTime = System.nanoTime();
-            printToASCII(imagePath, scale);
+            printToASCII(ImageHandler.loadImage(imagePath, scale));
             double convertTime = roundToNDecimal((System.nanoTime() - startTime)/1000000000.0, 7);
             Thread.sleep((long) Math.max(0, 200 - convertTime * 1000));
         }
@@ -23,14 +23,12 @@ public class ConvertToASCII {
      * Uses an array of ASCII character to represent the grayscale
      * Sample ratio of source image is set for font Lucida Console
      *
-     * @param filepath String with path to image
-     * @param scale How much to scale the image
-     * @throws IOException if image path is invalid
+     * @param readImage BufferedImage with path to image
      * @return String
      */
-    public static String printToASCII(String filepath, int scale) throws IOException {
+    public static String printToASCII(BufferedImage readImage) {
         //long startTime = System.nanoTime();
-        BufferedImage readImage = ImageHandler.loadImage(filepath, scale);
+        // BufferedImage readImage = ImageHandler.loadImage(filepath, scale);
         //double grayScaleTime = (System.nanoTime() - startTime)/1000000000.0;
         //System.out.println(grayScaleTime + " seconds to load");
 
@@ -41,8 +39,11 @@ public class ConvertToASCII {
         final double verticalSamplingScale = 5/3.0;
 
         // How many different grayness levels there are
+        // short ".:-=+*%#@"
+        // long: "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^`'."
+
         char[] asciiList = ".:-=+*%#@".toCharArray();
-        int roughness = 255 / (asciiList.length - 1);
+        int roughness = 255 / (asciiList.length);
 
         PrintStream tmp = System.out;
         StringBuilder charArray = new StringBuilder();
