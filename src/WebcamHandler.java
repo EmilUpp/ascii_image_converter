@@ -28,7 +28,7 @@ public class WebcamHandler {
         WebcamHandler handler = new WebcamHandler();
 
         handler.takeScreenshot();
-        handler.saveLatestImage("test.png");
+        handler.saveLatestImage();
     }
 
     BufferedImage takeScreenshot() {
@@ -38,10 +38,13 @@ public class WebcamHandler {
 
         liveImage = webcam.getImage();
 
+        System.out.println(liveImage.getHeight());
+        System.out.println(liveImage.getWidth());
+
         return liveImage;
     }
 
-    void saveLatestImage(String filePath) throws IOException {
+    void saveLatestImage() throws IOException {
         ImageIO.write(liveImage, "PNG", new File("test.png"));
     }
 

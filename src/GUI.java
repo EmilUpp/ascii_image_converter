@@ -1,12 +1,22 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-public class GuiTest {
+/**
+ * Class for handling the GUI showing the converted live feed from the camera to ASCII chars
+ *
+ * GUI functionality:
+ * Change in resolution of the picture displayed
+ * The current FPS of the live feed
+ * Start/Stopping the display
+ * Customizable grayscale
+ * Tool for bible study
+ */
+public class GUI {
     private JButton drawButton;
     private JPanel mainPanel;
     private JTextArea imageTextArea;
@@ -17,9 +27,6 @@ public class GuiTest {
 
     Timer timer;
 
-    int currentImage = 0;
-    String[] imagePathList;
-
     int scale = 8;
     int fontSize = (int) (scale * (5/3f));
 
@@ -28,24 +35,16 @@ public class GuiTest {
 
     WebcamHandler webcamHandler = new WebcamHandler();
 
-    public GuiTest() {
-
+    public GUI() {
         imageTextArea.setFont(new Font("Lucida Console", Font.PLAIN, fontSize));
 
         imageTextArea.setBackground(Color.BLACK);
         imageTextArea.setForeground(Color.WHITE);
 
-        imagePathList = LoadFromFolder.findJPGInFolder("G:\\Min enhet\\Programmering\\ascii_image_converter\\image_lists\\pokemon_image_list");
-
+        drawImage();
 
         drawButton.addActionListener(e -> {
-            timer = new Timer(0, e1 -> {
-                try {
-                    drawImage();
-                } catch (IOException | InterruptedException ioException) {
-                    ioException.printStackTrace();
-                }
-            });
+            timer = new Timer(0, e1 -> drawImage());
             timer.start();
         });
 
@@ -67,61 +66,57 @@ public class GuiTest {
         });
     }
 
-    public void drawImage() throws IOException, InterruptedException {
+    /**
+     * Reads in the current image from the webcamera
+     * Converts The image to a ASCII representation using the given grayscale
+     * Writes the image to a textarea
+     * Updates the framerate
+     */
+    public void drawImage() {
         frameTime = System.nanoTime();
 
         setResolution();
 
-        String filepath = imagePathList[currentImage];
-
         BufferedImage image = webcamHandler.takeScreenshot();
 
-        image = ImageHandler.resizeImage(image, scale/2f);
+        // Hopefully corrects for different webcam resolutions
+        double webcamFactor = (image.getWidth() / 320f);
+        image = ImageHandler.resizeImage(image, (scale/2.3f) * webcamFactor);
 
         resizeTextArea(image);
 
-        //BufferedImage image = ImageHandler.loadImage(filepath, scale);
-
-        long startTime = System.nanoTime();
-        String imageToDraw = ConvertToASCII.printToASCII(image, ConvertToASCII.grayscale);
-        double convertTime = ConvertToASCII.roundToNDecimal((System.nanoTime() - startTime)/1000000000.0, 7);
-        // Thread.sleep((long) Math.max(0, 40 - convertTime * 1000));
-
-        // String imageToDraw = ConvertToASCII.printToASCII("G:\\Min enhet\\Programmering\\ascii_image_converter\\images\\gunther_img.jpg", 5);
+        String imageToDraw = ConvertToASCII.convertImageToAsciiString(image, ConvertToASCII.grayscale);
 
         imageTextArea.setText(imageToDraw);
 
-        currentImage++;
-
-        if (currentImage >= imagePathList.length) {
-            currentImage = 0;
-        }
-
-        //fpsLabel.setText(String.format("%.2f", 1 / ConvertToASCII.roundToNDecimal((System.nanoTime() - frameTime) / 1000000000.0, 2)));
         updateFrameRate(frameTime);
     }
 
-    private void resizeTextArea(String filepath) throws IOException {
-        BufferedImage readImage = ImageHandler.loadImage(filepath, scale);
+    /**
+     * Resizes the textarea to fit the text
+     * @param readImage BufferedImage the image that's going to be written
+     */
+    private void resizeTextArea(BufferedImage readImage) {
         int width = (readImage.getWidth() * (scale));
         int height = (readImage.getHeight() * (scale));
 
         imageTextArea.setPreferredSize(new Dimension(width, height));
     }
 
-    private void resizeTextArea(BufferedImage readImage) throws IOException {
-        int width = (readImage.getWidth() * (scale));
-        int height = (readImage.getHeight() * (scale));
-
-        imageTextArea.setPreferredSize(new Dimension(width, height));
-    }
-
+    /**
+     * Sets the resolution of the picture by adjusting the scale and fontsize
+     * 5/3 is the ratio for the font used; Lucida Console
+     */
     public void setResolution(){
         scale = resolutionSlider.getValue();
         fontSize = (int) (scale * (5/3f));
         imageTextArea.setFont(new Font("Lucida Console", Font.PLAIN, fontSize));
     }
 
+    /**
+     * Calculates the FPS by taking the average of the last 30 frames and write to the label
+     * @param frameTime long elapsed time of current frame
+     */
     public void updateFrameRate(long frameTime) {
         double fps = 1 / ConvertToASCII.roundToNDecimal((System.nanoTime() - frameTime) / 1000000000.0, 4);
         frameRates.add(fps);
@@ -141,6 +136,10 @@ public class GuiTest {
         fpsLabel.setText(String.format("%.1f", average));
     }
 
+    /**
+     * Handles the option menu for changing and setting the grayscale used in converting the image
+     * @param currentGrayscale String the current grayscale used
+     */
     public void grayScaleOption(String currentGrayscale) {
         Object[] options = {"Confirm", "Presets", "Cancel"};
 
@@ -162,6 +161,12 @@ public class GuiTest {
         }
     }
 
+    /**
+     * Handles preset menu
+     * Short sets grayscale to 10 characters
+     * Long  sets grayscale to 70 characters
+     * God mode loads in the bible
+     */
     private void choosePreset() {
         Object[] options = {"Short", "Long", "God Mode", "Cancel"};
 
@@ -183,9 +188,6 @@ public class GuiTest {
 
     }
 
-
-
-
     public static void main(String[] args) {
         //Skapa ditt fönster
         String namn = "Gui Test";
@@ -199,7 +201,7 @@ public class GuiTest {
         frame.setLocationRelativeTo(null);
 
         //Skapa en instans av din den här klassen som hanterar din panel
-        GuiTest myForm = new GuiTest();
+        GUI myForm = new GUI();
         //Lägg in din panel i programfönstret
         frame.setContentPane(myForm.mainPanel);
         //Visa programfönstret på skärmen
