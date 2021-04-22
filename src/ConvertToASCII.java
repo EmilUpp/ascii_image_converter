@@ -1,4 +1,5 @@
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -7,13 +8,19 @@ import java.io.PrintStream;
  * @author Emil Sitell
  */
 public class ConvertToASCII {
+    public final static char[] longScale = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ".toCharArray();
+    public final static char[] shortScale = ".:-=+*%#@".toCharArray();
+
+    public static char[] grayscale = longScale;
+
     public static void main(String[] args) throws IOException, InterruptedException {
         String[] imagePathList = LoadFromFolder.findJPGInFolder("G:\\Min enhet\\Programmering\\ascii_image_converter\\image_lists\\give_you_up_image_list");
         final int scale = 3;
+        char[] grayscale = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ".toCharArray();
 
         for (String imagePath : imagePathList) {
             long startTime = System.nanoTime();
-            printToASCII(ImageHandler.loadImage(imagePath, scale));
+            printToASCII(ImageHandler.loadImage(imagePath, scale), grayscale);
             double convertTime = roundToNDecimal((System.nanoTime() - startTime)/1000000000.0, 7);
             Thread.sleep((long) Math.max(0, 200 - convertTime * 1000));
         }
@@ -26,7 +33,7 @@ public class ConvertToASCII {
      * @param readImage BufferedImage with path to image
      * @return String
      */
-    public static String printToASCII(BufferedImage readImage) {
+    public static String printToASCII(BufferedImage readImage, char[] grayscale) {
         //long startTime = System.nanoTime();
         // BufferedImage readImage = ImageHandler.loadImage(filepath, scale);
         //double grayScaleTime = (System.nanoTime() - startTime)/1000000000.0;
@@ -39,11 +46,7 @@ public class ConvertToASCII {
         final double verticalSamplingScale = 5/3.0;
 
         // How many different grayness levels there are
-        // short ".:-=+*%#@"
-        // long: "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^`'."
-
-        char[] asciiList = ".:-=+*%#@".toCharArray();
-        int roughness = 255 / (asciiList.length);
+        int roughness = 255 / (grayscale.length);
 
         PrintStream tmp = System.out;
         StringBuilder charArray = new StringBuilder();
@@ -58,7 +61,7 @@ public class ConvertToASCII {
             //StringBuilder charArray = new StringBuilder();
             for (double y = 0; y < height; y+=roundToNDecimal(verticalSamplingScale, 1)) {
                 for (int x = 0; x < width; x++){
-                    int pixelValueBinary = readImage.getRGB(x, (int) y);
+                    int pixelValueBinary = readImage.getRGB(width - (x+1), (int) y);
 
                     // Reads the RGB values
                     int r = (pixelValueBinary>>16)&0xff;
@@ -68,7 +71,13 @@ public class ConvertToASCII {
                     int avg = (r+g+b)/3;
 
                     int grayness = rgbToGrayness(avg, roughness);
-                    charArray.append(graynessToASCII(grayness, asciiList, false));
+
+                    if (!(new String(grayscale).equalsIgnoreCase("Pray"))){
+                        charArray.append(graynessToASCII(grayness, grayscale, false));
+                    }
+                    else{
+                        charArray.append(ConvertToBible.graynessToASCIIBible(4 - grayness));
+                    }
                 }
                 // Splits the rows of chars
                 charArray.append("\n");
@@ -81,6 +90,8 @@ public class ConvertToASCII {
             System.out.println(charArray);
 
              */
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } finally {
             System.setOut(tmp);
         }

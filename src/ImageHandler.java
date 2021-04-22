@@ -28,6 +28,7 @@ public class ImageHandler {
         }
 
         long startTime = System.nanoTime();
+        assert img != null;
         img = resizeImage(img, scale);
         double grayScaleTime = (System.nanoTime() - startTime)/1000000000.0;
         System.out.println(grayScaleTime + " seconds to resize");
@@ -93,7 +94,7 @@ public class ImageHandler {
      */
     public static BufferedImage loadImage(String filePath, int scale) throws IOException {
         BufferedImage img = null;
-        File f = null;
+        File f;
 
         // read image
         try {
@@ -104,10 +105,28 @@ public class ImageHandler {
             System.out.println(e);
         }
 
-        if (scale > 1) {
+        if (scale > 1 && img != null) {
             img = resizeImage(img, scale);
         }
 
         return img;
+    }
+
+    public static BufferedImage mirrorVertically(BufferedImage originalImage) {
+        int width = originalImage.getWidth();
+        int height = originalImage.getHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width / 2; x++) {
+                System.out.println(x + " " + y);
+                int firstPixel = originalImage.getRGB(x, y);
+                int tempMirrorPixel = originalImage.getRGB(width - (x+1), y);
+
+                originalImage.setRGB(width - (x+1), y, firstPixel);
+                originalImage.setRGB(x, y, tempMirrorPixel);
+            }
+        }
+
+        return originalImage;
     }
 }

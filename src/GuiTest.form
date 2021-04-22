@@ -66,12 +66,34 @@
           </component>
         </children>
       </grid>
-      <component id="ead27" class="javax.swing.JTextArea" binding="imageTextArea">
+      <grid id="b16d4" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+        <constraints/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="ead27" class="javax.swing.JTextArea" binding="imageTextArea">
+            <constraints/>
+            <properties>
+              <preferredSize width="700" height="400"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="bf63c" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
         <constraints/>
         <properties>
-          <preferredSize width="700" height="400"/>
+          <preferredSize width="500" height="100"/>
         </properties>
-      </component>
+        <border type="none"/>
+        <children>
+          <component id="73ddd" class="javax.swing.JButton" binding="chooseGrayscaleButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Choose Grayscale"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
     </children>
   </grid>
 </form>

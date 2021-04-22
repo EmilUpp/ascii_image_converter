@@ -10,10 +10,10 @@ public class GuiTest {
     private JButton drawButton;
     private JPanel mainPanel;
     private JTextArea imageTextArea;
-    private JButton changeResolutionButton;
     private JLabel fpsLabel;
     private JSlider resolutionSlider;
     private JButton stopButton;
+    private JButton chooseGrayscaleButton;
 
     Timer timer;
 
@@ -48,19 +48,21 @@ public class GuiTest {
             });
             timer.start();
         });
-        /*
-        changeResolutionButton.addActionListener(e -> {
-            timer.stop();
-            scale = (int) JOptionPane.showInputDialog(mainPanel, "Choose resolution", "Resolution", JOptionPane.PLAIN_MESSAGE, null, new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 4);
-            fontSize = (int) (scale * (5/3f));
-            imageTextArea.setFont(new Font("Lucida Console", Font.PLAIN, fontSize));
-            timer.start();
-        });
 
-         */
         stopButton.addActionListener(e -> {
-            if (timer.isRunning()){
+            if (timer != null && timer.isRunning()){
                 timer.stop();
+            }
+        });
+        chooseGrayscaleButton.addActionListener(e -> {
+            if (timer != null && timer.isRunning()) {
+                timer.stop();
+            }
+
+            grayScaleOption(new String(ConvertToASCII.grayscale));
+
+            if (timer != null) {
+                timer.start();
             }
         });
     }
@@ -81,13 +83,14 @@ public class GuiTest {
         //BufferedImage image = ImageHandler.loadImage(filepath, scale);
 
         long startTime = System.nanoTime();
-        String imageToDraw = ConvertToASCII.printToASCII(image);
+        String imageToDraw = ConvertToASCII.printToASCII(image, ConvertToASCII.grayscale);
         double convertTime = ConvertToASCII.roundToNDecimal((System.nanoTime() - startTime)/1000000000.0, 7);
         // Thread.sleep((long) Math.max(0, 40 - convertTime * 1000));
 
         // String imageToDraw = ConvertToASCII.printToASCII("G:\\Min enhet\\Programmering\\ascii_image_converter\\images\\gunther_img.jpg", 5);
 
         imageTextArea.setText(imageToDraw);
+
         currentImage++;
 
         if (currentImage >= imagePathList.length) {
@@ -138,6 +141,51 @@ public class GuiTest {
         fpsLabel.setText(String.format("%.1f", average));
     }
 
+    public void grayScaleOption(String currentGrayscale) {
+        Object[] options = {"Confirm", "Presets", "Cancel"};
+
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Choose a grayscale"));
+        JTextField textField = new JTextField(35);
+        textField.setText(currentGrayscale);
+        panel.add(textField);
+
+        int result = JOptionPane.showOptionDialog(null, panel, "Grayscale",
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+                options, null);
+
+        if (result == JOptionPane.YES_OPTION) {
+            ConvertToASCII.grayscale = textField.getText().toCharArray();
+        }
+        else if (result == 1){
+            choosePreset();
+        }
+    }
+
+    private void choosePreset() {
+        Object[] options = {"Short", "Long", "God Mode", "Cancel"};
+
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Choose a preset"));
+
+        int result = JOptionPane.showOptionDialog(null, panel, "Grayscale presets",
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+                options, null);
+
+        String nextGrayscale = switch (result) {
+            case 0 -> new String(ConvertToASCII.shortScale);
+            case 1 -> new String(ConvertToASCII.longScale);
+            case 2 -> "Pray";
+            default -> new String(ConvertToASCII.grayscale);
+        };
+
+        grayScaleOption(nextGrayscale);
+
+    }
+
+
+
+
     public static void main(String[] args) {
         //Skapa ditt fönster
         String namn = "Gui Test";
@@ -156,5 +204,7 @@ public class GuiTest {
         frame.setContentPane(myForm.mainPanel);
         //Visa programfönstret på skärmen
         frame.setVisible(true);
+
+        WebcamHandler.closeCameraOnExit();
     }
 }
