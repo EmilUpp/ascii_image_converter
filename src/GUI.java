@@ -153,8 +153,14 @@ public class GUI {
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
                 options, null);
 
+        String nextGrayscale = textField.getText();
+
+        if (nextGrayscale.length() == 0){
+            nextGrayscale = " ";
+        }
+
         if (result == JOptionPane.YES_OPTION) {
-            ConvertToASCII.grayscale = textField.getText().toCharArray();
+            ConvertToASCII.grayscale = nextGrayscale.toCharArray();
         }
         else if (result == 1){
             choosePreset();
@@ -180,7 +186,7 @@ public class GUI {
         String nextGrayscale = switch (result) {
             case 0 -> new String(ConvertToASCII.shortScale);
             case 1 -> new String(ConvertToASCII.longScale);
-            case 2 -> "Pray";
+            case 2 -> "Amen";
             default -> new String(ConvertToASCII.grayscale);
         };
 
