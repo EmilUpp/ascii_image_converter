@@ -38,9 +38,6 @@ public class WebcamHandler {
 
         liveImage = webcam.getImage();
 
-        System.out.println(liveImage.getHeight());
-        System.out.println(liveImage.getWidth());
-
         return liveImage;
     }
 

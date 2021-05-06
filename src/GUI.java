@@ -186,7 +186,7 @@ public class GUI {
         String nextGrayscale = switch (result) {
             case 0 -> new String(ConvertToASCII.shortScale);
             case 1 -> new String(ConvertToASCII.longScale);
-            case 2 -> "Amen";
+            case 2 -> "Pray";
             default -> new String(ConvertToASCII.grayscale);
         };
 
