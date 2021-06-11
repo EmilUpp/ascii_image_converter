@@ -8,9 +8,7 @@ import javax.imageio.ImageIO;
 
 
 /**
- * Example of how to take single picture.
- *
- * @author Bartosz Firyn (SarXos)
+ * Class for handling the webcam in order to capture live image
  */
 public class WebcamHandler {
     public static Webcam webcam;
@@ -18,7 +16,14 @@ public class WebcamHandler {
     public BufferedImage liveImage;
 
     public WebcamHandler() {
-        webcam = Webcam.getDefault();
+        try{
+            webcam = Webcam.getDefault();
+        }
+        catch (Exception e){
+            webcam = null;
+            System.out.println("Error with webcam");
+        }
+
         liveImage = null;
     }
 
@@ -31,7 +36,16 @@ public class WebcamHandler {
         handler.saveLatestImage();
     }
 
+    /**
+     * Takes a screenshot by reading the current image
+     * @return BufferedImage the image live
+     */
     BufferedImage takeScreenshot() {
+        if (webcam == null){
+            return new BufferedImage(256, 256,
+                    BufferedImage.TYPE_INT_RGB);
+        }
+
         if (!webcam.isOpen()) {
             webcam.open();
         }
@@ -41,6 +55,10 @@ public class WebcamHandler {
         return liveImage;
     }
 
+    /**
+     * Saves an image as a png
+     * @throws IOException if anythings doesn't work out
+     */
     void saveLatestImage() throws IOException {
         ImageIO.write(liveImage, "PNG", new File("test.png"));
     }

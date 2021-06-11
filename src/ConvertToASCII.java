@@ -71,7 +71,7 @@ public class ConvertToASCII {
 
                     int grayness = rgbToGrayness(avg, roughness);
 
-                    if (!(new String(grayscale).equalsIgnoreCase("Pray"))){
+                    if (!(new String(grayscale).equalsIgnoreCase("Amen"))){
                         charArray.append(graynessToASCII(grayness, grayscale, false));
                     }
                     else{

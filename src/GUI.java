@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -10,9 +9,9 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
  * Class for handling the GUI showing the converted live feed from the camera to ASCII chars
  *
  * GUI functionality:
- * Change in resolution of the picture displayed
+ * Change resolution of the picture displayed
  * The current FPS of the live feed
- * Start/Stopping the display
+ * Start/Stopp the display
  * Customizable grayscale
  * Tool for bible study
  */
@@ -41,10 +40,14 @@ public class GUI {
         imageTextArea.setBackground(Color.BLACK);
         imageTextArea.setForeground(Color.WHITE);
 
+        checkWebcam();
+
         drawImage();
 
         drawButton.addActionListener(e -> {
-            timer = new Timer(0, e1 -> drawImage());
+            if (timer == null){
+                timer = new Timer(0, e1 -> drawImage());
+            }
             timer.start();
         });
 
@@ -186,12 +189,21 @@ public class GUI {
         String nextGrayscale = switch (result) {
             case 0 -> new String(ConvertToASCII.shortScale);
             case 1 -> new String(ConvertToASCII.longScale);
-            case 2 -> "Pray";
+            case 2 -> "Amen";
             default -> new String(ConvertToASCII.grayscale);
         };
 
         grayScaleOption(nextGrayscale);
 
+    }
+
+    /**
+     * Alerts the user if no webcam was found
+     */
+    void checkWebcam() {
+        if (WebcamHandler.webcam == null){
+            JOptionPane.showMessageDialog(mainPanel, "No Webcam was found", "Webcam Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public static void main(String[] args) {

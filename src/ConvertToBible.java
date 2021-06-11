@@ -60,7 +60,7 @@ public class ConvertToBible {
      * @throws FileNotFoundException raised if the bible file is missing
      */
     public static void loadBible() throws FileNotFoundException {
-        File bibleFile = new File("bibleFile.txt");
+        File bibleFile = new File("src\\bibleFile.txt");
 
         Scanner fileReader = new Scanner(bibleFile);
 

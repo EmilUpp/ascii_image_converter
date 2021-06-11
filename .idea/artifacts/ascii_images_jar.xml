@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ascii_images:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ascii_images_jar</output-path>
+    <root id="archive" name="ascii_images.jar">
+      <element id="module-output" name="ascii_images" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../Libraries/opencv/build/java/opencv-440.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/github/sarxos/webcam-capture/0.3.10/webcam-capture-0.3.10.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/nativelibs4java/bridj/0.6.2/bridj-0.6.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.2/slf4j-api-1.7.2.jar" path-in-jar="/" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/bibleFile.txt" />
+    </root>
+  </artifact>
+</component>
